@@ -10,13 +10,14 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class RestClient {
 
     /**
-     * GET Method - Status code, Payload & Headers from a GET API call
+     * GET Method (without passing Headers) - Status code, Payload & Headers from a GET API call
      */
-    public void get(String url) throws IOException {
+    public CloseableHttpResponse get(String url) throws IOException {
 
         /* createDefault() returns an object of CloseableHttpClient, which is an abstract class
          * With this reference variable (httpClient), we are creating a simple http client
@@ -38,37 +39,25 @@ public class RestClient {
          */
         CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
 
-        /* RECEIVING STATUS CODE
-         * Receive the status code from response. Since status code is an integer, we store into int variable
-         */
-        int statusCode = httpResponse.getStatusLine().getStatusCode();
-        System.out.println("Status Code: "+statusCode+"\n");
+        return httpResponse;
+    }
 
-        /* RECEIVING RESPONSE PAYLOAD
-         * In order to receive the payload from the response, we need to use EntityUtils class & convert it to a String.
-         * Pass the httpResponse, in order to receive the response, and call getEntity() on the response.
-         * UTF-8 is defined as default character set, returning standard characters, in case of special characters, etc.
-         */
-        String responsePayload = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+    /**
+     * GET Method (while passing Headers using HashMap)
+     */
+    public CloseableHttpResponse get(String url, HashMap<String, String> headers) throws IOException {
 
-        /* We need to convert the String (responsePayload) into JSON format. Using the JSON dependency, we use
-         * JSONObject class to create a new ref variable and pass in the responsePayload (string). The string will be
-         * converted to a JSON array
-         */
-        JSONObject responsePayloadJSON = new JSONObject(responsePayload);
-        System.out.println("Response (JSON):\n"+responsePayloadJSON);
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(url);
 
-        /* RECEIVING HEADERS
-         * In order to receive the headers, we need to use getAllHeaders() on the response, itself. It will return an
-         * array of headers.
-         * Since headers are in the form of key-value pairs, we create a Hash Map & store the headers using for-each loop)
-         */
-        Header[] headersArray = httpResponse.getAllHeaders();
-        HashMap<String, String> headers = new HashMap<String, String>();
-
-        for (Header h:headersArray){
-            headers.put(h.getName(), h.getValue());
+        for (Map.Entry<String, String> entry : headers.entrySet()){
+            httpGet.addHeader(entry.getKey(), entry.getValue());
         }
-        System.out.println("Headers:\n"+headers);
+
+        CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
+
+        return httpResponse;
     }
 }
+
+
