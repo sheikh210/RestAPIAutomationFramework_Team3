@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="Twitter API Test" parallel="false">
+
+    <parameter name="username" value="realDonaldTrump"></parameter>
+    <test name="Twitter Follow And Friends">
+        <classes>
+            <class name="TestTwitter"/>
+        </classes>
+    </test>
+
+</suite>

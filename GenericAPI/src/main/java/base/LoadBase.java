@@ -6,12 +6,22 @@ import java.util.Properties;
 public class LoadBase {
 
     public Properties prop;
+    private String path = System.getProperty("user.dir") + "\\src\\main\\resources\\config.properties";
 
     public LoadBase() {
         try {
             prop = new Properties();
-            FileInputStream fis = new FileInputStream(System.getProperty("user.dir") +
-                    "\\src\\main\\resources\\config.properties");
+            FileInputStream fis = new FileInputStream(path);
+            prop.load(fis);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public LoadBase(String path) {
+        try {
+            prop = new Properties();
+            FileInputStream fis = new FileInputStream(path);
             prop.load(fis);
         } catch (Exception e) {
             e.printStackTrace();
