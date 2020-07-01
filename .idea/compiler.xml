@@ -6,9 +6,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="GenericAPI" />
-        <module name="com.jsonplaceholder" />
         <module name="com.twitter" />
+        <module name="com.jsonplaceholder" />
+        <module name="GenericAPI" />
       </profile>
     </annotationProcessing>
   </component>
