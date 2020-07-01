@@ -44,4 +44,21 @@ public class JsonPlaceholderDataProvider {
                 {data5, "/9"}
         };
     }
+
+    @DataProvider (name = "delete_data")
+    public Object[][] getDeleteData() {
+        return new Object[][] {
+                {"/489", "{}"},
+                {"/256", "{}"},
+                {"/71", "{}"},
+                {"/190", "{}"},
+                {"/403", "{}"},
+                {"/339", "{}"},
+                {"/275", "{}"},
+                {"/221", "{}"},
+                {"/111", "{}"},
+                {"/14", "{}"}
+        };
+    }
+
 }

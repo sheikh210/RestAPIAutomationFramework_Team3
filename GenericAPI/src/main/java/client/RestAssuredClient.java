@@ -47,4 +47,10 @@ public class RestAssuredClient {
         return given().contentType(ContentType.JSON).with().body(jsonBody).when().patch(url).then();
     }
 
+    public ValidatableResponse delete(String url) {
+        RestAssured.defaultParser = Parser.JSON;
+
+        return given().contentType(ContentType.JSON).when().delete(url).then();
+    }
+
 }

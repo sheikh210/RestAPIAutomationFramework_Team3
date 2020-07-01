@@ -9,6 +9,7 @@ import io.restassured.response.ResponseBody;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.ResponseSpecification;
 import org.json.simple.JSONObject;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -38,7 +39,7 @@ public class TestJsonPlaceholder extends RestAssuredClient {
         baseURL = load.prop.getProperty("BaseURL");
     }
 
-    @Test
+    @Test (priority = 1)
     public void testGetAllPosts() {
         apiURL = getENDPOINT_POSTS();
         url = baseURL+apiURL;
@@ -50,7 +51,7 @@ public class TestJsonPlaceholder extends RestAssuredClient {
         response.body().prettyPeek();
     }
 
-    @Test
+    @Test (priority = 2)
     public void testGetAllComments() {
         apiURL = getENDPOINT_COMMENTS();
         url = baseURL + apiURL;
@@ -60,16 +61,17 @@ public class TestJsonPlaceholder extends RestAssuredClient {
         response.body().prettyPeek();
     }
 
-    @Test (dataProvider = "comments_data", dataProviderClass = JsonPlaceholderDataProvider.class)
+    @Test (priority = 3, dataProvider = "comments_data", dataProviderClass = JsonPlaceholderDataProvider.class)
     public void testCommentSelection(int id, String email){
         apiURL = getENDPOINT_COMMENTS() + "?id=" + id;
         url = baseURL + apiURL;
 
         response = get(url);
         response.then().assertThat().spec(checkStatusCodeAndContentType).body("email", hasToString(email));
+        response.body().prettyPeek();
     }
 
-    @Test
+    @Test (priority = 4)
     public void testPostInPost() {
         apiURL = getENDPOINT_POSTS();
         url = baseURL+apiURL;
@@ -84,7 +86,7 @@ public class TestJsonPlaceholder extends RestAssuredClient {
         validatableResponse.extract().response().body().prettyPeek();
     }
 
-    @Test (dataProvider = "patch_data", dataProviderClass = JsonPlaceholderDataProvider.class)
+    @Test (priority = 5, dataProvider = "patch_data", dataProviderClass = JsonPlaceholderDataProvider.class)
     public void testPatchInUsers (HashMap map, String id) {
         apiURL = getENDPOINT_USERS() + id;
         url = baseURL + apiURL;
@@ -103,6 +105,21 @@ public class TestJsonPlaceholder extends RestAssuredClient {
                 .and().body(key, hasToString((String) map.get(key)));
 
         validatableResponse.extract().response().body().prettyPeek();
+    }
+
+    @Test (priority = 6, dataProvider = "delete_data", dataProviderClass = JsonPlaceholderDataProvider.class)
+    public void testDeleteComments(String id, String expected) {
+        apiURL = getENDPOINT_COMMENTS() + id;
+        url = baseURL + apiURL;
+
+        validatableResponse = delete(url);
+
+        System.out.println("STATUS CODE: "+validatableResponse.extract().statusCode() + "\n");
+        validatableResponse.assertThat().spec(checkStatusCodeAndContentType);
+
+        validatableResponse.extract().response().body().prettyPeek();
+        String actualResponseBody = validatableResponse.extract().body().asString();
+        Assert.assertEquals(actualResponseBody, expected, "UNEXPECTED RESPONSE");
     }
 
 
