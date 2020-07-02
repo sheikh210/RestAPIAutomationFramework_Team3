@@ -29,10 +29,10 @@ public class RestAssuredClient {
         return ENDPOINT_USERS;
     }
 
-    public Response get(String url){
+    public ValidatableResponse get(String url){
         RestAssured.defaultParser = Parser.JSON;
 
-        return given().when().get(url).then().contentType(ContentType.JSON).extract().response();
+        return given().contentType(ContentType.JSON).when().get(url).then();
     }
 
     public ValidatableResponse post(HashMap jsonBody, String url){
