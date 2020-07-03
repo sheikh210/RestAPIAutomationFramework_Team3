@@ -12,6 +12,7 @@
         <module>GenericAPI</module>
         <module>com.twitter</module>
         <module>com.jsonplaceholder</module>
+        <module>com.spotify</module>
     </modules>
 
 

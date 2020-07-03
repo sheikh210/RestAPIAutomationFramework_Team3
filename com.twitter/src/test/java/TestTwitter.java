@@ -18,24 +18,23 @@ import static org.hamcrest.Matchers.hasSize;
 
 public class TestTwitter extends TwitterRestClient {
 
-    private String expectedWBPath = System.getProperty("user.dir")+"\\src\\test\\resources\\Test_Data.xlsx";
-    private String resourcesPath = System.getProperty("user.dir")+"\\src\\main\\resources\\twitter.properties";
+    private String expectedWBPath = System.getProperty("user.dir") + "\\src\\test\\resources\\Test_Data.xlsx";
+    private String resourcesPath = System.getProperty("user.dir") + "\\src\\main\\resources\\twitter.properties";
     ValidatableResponse response;
-    TwitterRestClient twitterRestClient = new TwitterRestClient();
     ResponseSpecification checkStatusCodeAndContentType = new ResponseSpecBuilder()
             .expectStatusCode(HttpURLConnection.HTTP_OK)
             .expectContentType(ContentType.JSON).build();
 
     @BeforeMethod
     public void setUp() {
-        twitterRestClient.loadProp();
+        loadProp();
     }
 
     // POST
-    @Test (priority = 1)
-    @Parameters ("username")
+    @Test(priority = 1)
+    @Parameters("username")
     public void testTwitterFollow(@Optional("realDonaldTrump") String username) {
-        response = twitterRestClient.postTwitterFollow(username);
+        response = postTwitterFollow(username);
 
         response.assertThat().spec(checkStatusCodeAndContentType);
 
@@ -45,10 +44,10 @@ public class TestTwitter extends TwitterRestClient {
     }
 
     // POST
-    @Test (priority = 2)
-    @Parameters ("username")
+    @Test(priority = 2)
+    @Parameters("username")
     public void testTwitterUnFollow(@Optional("realDonaldTrump") String username) {
-        response = twitterRestClient.postTwitterUnFollow(username);
+        response = postTwitterUnFollow(username);
 
         response.assertThat().spec(checkStatusCodeAndContentType);
 
@@ -58,21 +57,21 @@ public class TestTwitter extends TwitterRestClient {
     }
 
     // GET
-    @Test (priority = 3)
+    @Test(priority = 3)
     public void testTwitterFriendsListCount() {
-        response = twitterRestClient.getTwitterFriendList("@ssheikh210");
+        response = getTwitterFriendList("@ssheikh210");
 
         List<String> responseString = response.extract().response().body().jsonPath().getList("users");
-        System.out.println("SIZE OF \"USERS\" IN RESPONSE PAYLOAD: "+responseString.size());
+        System.out.println("SIZE OF \"USERS\" IN RESPONSE PAYLOAD: " + responseString.size());
 
         response.assertThat().spec(checkStatusCodeAndContentType)
                 .and().body("users", hasSize(20));
     }
 
     // GET
-    @Test (priority = 4)
+    @Test(priority = 4)
     public void testTwitterFriendsListNames() throws IOException {
-        response = twitterRestClient.getTwitterFriendList("@ssheikh210");
+        response = getTwitterFriendList("@ssheikh210");
 
         response.assertThat().spec(checkStatusCodeAndContentType);
 
@@ -88,6 +87,7 @@ public class TestTwitter extends TwitterRestClient {
         }
         Assert.assertTrue(TestUtilities.compareTextListToExpectedStringArray(actualUsernames, expectedWBPath, "@ssheikh_Friends"));
     }
+}
 
 
 
@@ -113,20 +113,6 @@ public class TestTwitter extends TwitterRestClient {
 
 
 
-//        System.out.println(response.extract().response().body().prettyPrint());
-
-
-    //    @Test
-//    public void testStatusCode(){
-//        restAssuredClient = new RestAssuredClient();
-//        response = restAssuredClient.get(this.url);
-//
-//        int actualStatusCode = response.getStatusCode();
-//        response.then().assertThat().statusCode(HttpURLConnection.HTTP_OK);
-//
-//        System.out.println("Actual Status Code: "+actualStatusCode);
-//    }
-//
 //    @Test
 //    public void testSizeData() {
 //        restAssuredClient = new RestAssuredClient();
@@ -145,14 +131,5 @@ public class TestTwitter extends TwitterRestClient {
 //                .and().body("total", is(12))
 //                .and().body("total_pages", is(2));
 //    }
-//
-//    @Test
-//    public void test() {
-//        restAssuredClient = new RestAssuredClient();
-//        response = restAssuredClient.get(this.url);
-//        System.out.println(response.body().prettyPrint());
-//    }
-}
-
 
 

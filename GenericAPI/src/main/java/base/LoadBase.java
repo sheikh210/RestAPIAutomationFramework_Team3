@@ -17,14 +17,4 @@ public class LoadBase {
             e.printStackTrace();
         }
     }
-
-    public LoadBase(String path) {
-        try {
-            prop = new Properties();
-            FileInputStream fis = new FileInputStream(path);
-            prop.load(fis);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

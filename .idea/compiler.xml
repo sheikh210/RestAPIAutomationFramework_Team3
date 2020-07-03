@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="com.twitter" />
+        <module name="com.spotify" />
         <module name="com.jsonplaceholder" />
         <module name="GenericAPI" />
       </profile>

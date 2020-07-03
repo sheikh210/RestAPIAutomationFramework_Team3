@@ -1,14 +1,10 @@
 import base.LoadBase;
 import client.RestAssuredClient;
-import dataprovider.JsonPlaceholderDataProvider;
-import io.restassured.RestAssured;
+import dataProviders.JsonPlaceholderDataProviders;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
-import io.restassured.response.ResponseBody;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.ResponseSpecification;
-import org.json.simple.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -60,9 +56,9 @@ public class TestJsonPlaceholder extends RestAssuredClient {
         validatableResponse.extract().response().body().prettyPeek();
     }
 
-    @Test (priority = 3, dataProvider = "comments_data", dataProviderClass = JsonPlaceholderDataProvider.class)
+    @Test (priority = 3, dataProvider = "comments_data", dataProviderClass = JsonPlaceholderDataProviders.class)
     public void testGetCommentSelection(int id, String email){
-        apiURL = getENDPOINT_COMMENTS() + "?id=" + id;
+        apiURL = getENDPOINT_COMMENTS() + id;
         url = baseURL + apiURL;
 
         validatableResponse = get(url);
@@ -76,7 +72,7 @@ public class TestJsonPlaceholder extends RestAssuredClient {
         url = baseURL+apiURL;
 
         HashMap<String, String> jsonBody = new HashMap<>();
-        jsonBody.put("title", "Sami's Book");
+        jsonBody.put("title", "TEST POST");
         jsonBody.put("body", "TEST BODY");
 
         validatableResponse = post(jsonBody, url);
@@ -85,16 +81,15 @@ public class TestJsonPlaceholder extends RestAssuredClient {
         validatableResponse.extract().response().body().prettyPeek();
     }
 
-    @Test (priority = 5, dataProvider = "patch_data", dataProviderClass = JsonPlaceholderDataProvider.class)
+    @Test (priority = 5, dataProvider = "patch_data", dataProviderClass = JsonPlaceholderDataProviders.class)
     public void testPatchInUsers (HashMap map, String id) {
         apiURL = getENDPOINT_USERS() + id;
         url = baseURL + apiURL;
 
         validatableResponse = patch(map, url);
 
-        Set keySet = map.keySet();
         String key = "";
-        for (Object k : keySet){
+        for (Object k : map.keySet()){
             key = String.valueOf(k);
         }
 
@@ -106,7 +101,28 @@ public class TestJsonPlaceholder extends RestAssuredClient {
         validatableResponse.extract().response().body().prettyPeek();
     }
 
-    @Test (priority = 6, dataProvider = "delete_data", dataProviderClass = JsonPlaceholderDataProvider.class)
+    @Test (priority = 6, dataProvider = "put_data", dataProviderClass = JsonPlaceholderDataProviders.class)
+    public void testPutPosts(HashMap map, String id) {
+        apiURL = getENDPOINT_POSTS() + id;
+        url = baseURL + apiURL;
+
+        validatableResponse = put(map, url);
+        validatableResponse.extract().response().body().prettyPeek();
+
+        String key = null;
+        String value = null;
+
+        Set<HashMap.Entry<Object, Object>> entrySet = map.entrySet();
+        for (Map.Entry<Object, Object> entry : entrySet){
+            key = String.valueOf(entry.getKey());
+            value = String.valueOf(entry.getValue());
+
+            validatableResponse.assertThat().spec(checkStatusCodeAndContentType)
+                    .and().body(key, hasToString(value));
+        }
+    }
+
+    @Test (priority = 7, dataProvider = "delete_data", dataProviderClass = JsonPlaceholderDataProviders.class)
     public void testDeleteComments(String id, String expected) {
         apiURL = getENDPOINT_COMMENTS() + id;
         url = baseURL + apiURL;
@@ -121,10 +137,26 @@ public class TestJsonPlaceholder extends RestAssuredClient {
         Assert.assertEquals(actualResponseBody, expected, "UNEXPECTED RESPONSE");
     }
 
+    @Test (priority = 8)
+    public void testHead() {
+        apiURL = getENDPOINT_POSTS() + "/1";
+        url = baseURL + apiURL;
 
+        validatableResponse = head(url);
+        validatableResponse.extract().response().body().prettyPeek();
 
+        validatableResponse.assertThat().spec(checkStatusCodeAndContentType);
+    }
 
+    @Test (priority = 9)
+    public void testOptions() {
+        apiURL = getENDPOINT_USERS();
+        url = baseURL + apiURL;
 
-
+        validatableResponse = options(url);
+        validatableResponse.extract().response().body().prettyPeek();
+        validatableResponse.assertThat().statusCode(204)
+                .header("Access-Control-Allow-Methods", hasToString("GET,HEAD,PUT,PATCH,POST,DELETE"));
+    }
 
 }

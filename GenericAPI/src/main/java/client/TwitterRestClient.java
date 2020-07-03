@@ -1,5 +1,6 @@
 package client;
 
+import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
 
 import java.io.FileInputStream;
